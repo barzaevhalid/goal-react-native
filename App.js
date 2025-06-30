@@ -2,7 +2,7 @@ import { use, useState } from "react";
 import {
   Button,
   FlatList,
-  ScrollView,
+  ScrollView, StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -19,11 +19,13 @@ export default function App() {
   const goalInputHandler = (inputText) => {
     setEnteredGoalText(inputText);
   };
-  const addgoalHandler = () => {
+  const addGoalHandler = () => {
     setCourseGoals((prev) => [
       ...prev,
       { text: enteredGoalText, id: Math.random().toString() },
     ]);
+    setModalIsVisible(false);
+
   };
 
   const startAddGoalHandler = () => {
@@ -33,16 +35,23 @@ export default function App() {
     setCourseGoals((prev) => prev.filter((item) => item.id !== id));
   };
   return (
+      <>
+        <StatusBar barStyle={"dark-content"}/>
     <View style={styles.container}>
       <View style={styles.inputWrapper}>
-        <Button
-          title="add new goal"
-          color="#5e0acc"
-          onPress={startAddGoalHandler}
-        />
+        <View style={styles.addGoalBtn}>
+          <Button
+              title="add new goal"
+              color="#5e0acc"
+              onPress={startAddGoalHandler}
+          />
+        </View>
         <GoalInput
+            value={enteredGoalText}
           onChangeText={goalInputHandler}
-          addgoalHandler={addgoalHandler}
+          addGoalHandler={addGoalHandler}
+          modalIsVisible={modalIsVisible}
+            setModalIsVisible={setModalIsVisible}
         />
       </View>
       <View style={styles.goalsContainer}>
@@ -51,12 +60,15 @@ export default function App() {
         <FlatList
           data={courseGolas}
           renderItem={({ item }) => (
-            <GoalItem item={item} deleteGoalHandler={deleteGoalHandler} />
+            <GoalItem item={item} deleteGoalHandler={deleteGoalHandler}  />
           )}
         />
       </View>
     </View>
+      </>
   );
+
+
 }
 
 const styles = StyleSheet.create({
@@ -73,11 +85,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     marginBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
 
   goalsContainer: {
     flex: 5,
   },
+  addGoalBtn: {
+    width: "100%",
+  }
 });
